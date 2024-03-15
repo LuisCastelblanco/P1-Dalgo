@@ -2,10 +2,76 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
+// Federico Pungo Castro - 201822943
+// Luis Alfredo Castelblanco - 201910966 
 public class ProblemaP1 {
     
 
     public static int calcularMovimientosOptimizados(int numTorres, int[] torres) {
+        int totalMovimientos = 0;
+
+        // casos base en los que no existe un arreglo y en los que es un arreglo con una sola torre
+        if(numTorres <= 1 || ordenadoDeMayorAMenor(torres)){
+            return totalMovimientos;
+        }
+    
+        // Realizar movimientos entre torres adyacentes para intentar ordenarlas.
+        for (int i = 0  ; i < numTorres-1; i++) {
+
+            if(i==0 && torres[i] < torres[i + 1]){
+                while (torres[i] < torres[i + 1]) {
+                
+                    torres[i]++;
+                    torres[i + 1]--;
+                    totalMovimientos++;
+                   
+            }}
+            
+            int difAnt,difSig;
+            if(i>0){
+                difAnt = torres[i - 1] - torres[i];
+                difSig = torres[i+1] - torres[i];
+
+                if(difAnt>difSig && torres[i] < torres[i + 1]){
+                    while (torres[i] < torres[i + 1]) {
+                    
+                        torres[i]++;
+                        torres[i - 1]--;
+                        totalMovimientos++;
+                       
+                    }
+                }
+    
+                else if (difSig>difAnt && torres[i] < torres[i + 1]){
+                    while (torres[i] < torres[i + 1]) {
+                    
+                        torres[i]++;
+                        torres[i + 1]--;
+                        totalMovimientos++;
+                       
+                    }
+                }
+                else if(difAnt == difSig && torres[i] < torres[i + 1]){
+                    while (torres[i] < torres[i + 1]) {
+                    
+                        torres[i]++;
+                        torres[i + 1]--;
+                        totalMovimientos++;
+                       
+                    }
+                }
+            }
+        }
+        
+        if (!ordenadoDeMayorAMenor(torres)) {
+
+            totalMovimientos += calcularMovimientosOptimizados(numTorres, torres);
+        }
+    
+        return totalMovimientos;
+    }
+
+    public static int calcularMovimientosOptimizados2(int numTorres, int[] torres) {
         int totalMovimientos = 0;
         // casos base en los que no existe un arreglo y en los que es un arreglo con una sola torre
         if(numTorres <= 1 || ordenadoDeMayorAMenor(torres)){
@@ -19,13 +85,15 @@ public class ProblemaP1 {
                 torres[i + 1]--;
                 totalMovimientos++;
             }
+            //System.out.println( "Arreglo torres ordenado : " + Arrays.toString(torres));
         }
         if (!ordenadoDeMayorAMenor(torres)) {
-            totalMovimientos += calcularMovimientosOptimizados(numTorres, torres);
+            totalMovimientos += calcularMovimientosOptimizados2(numTorres, torres);
         }
     
         return totalMovimientos;
     }
+
     // Metodo check para determinar si el arreglo ya esta ordenado de mayor a menor como se desea 
     public static boolean ordenadoDeMayorAMenor(int[] torres) {
         for (int i = 0; i < torres.length - 1; i++) {
@@ -63,14 +131,20 @@ public class ProblemaP1 {
                 final String [] dataStr = line.split(" ");
                 final int[] fichas = Arrays.stream(dataStr).mapToInt(f->Integer.parseInt(f)).toArray();
                 final int[] resultado = eliminarPrimero(fichas);
-
+                final int[] resultado2 = eliminarPrimero(fichas);
+                int opcion1 = calcularMovimientosOptimizados(fichas[0],resultado);
+                int opcion2 = calcularMovimientosOptimizados2(fichas[0],resultado2);
+                if(opcion1<opcion2){
+                    System.out.println( "Valores de entrada: " +resultado.length +  ",    Movimientos necesarios: " + opcion1);
                 
+                    //System.out.println( "Arreglo torres ordenado : " + Arrays.toString(resultado));
+                }
+                else{
+                    System.out.println( "Valores de entrada: " +resultado.length +  ",    Movimientos necesarios: " + opcion2);
                 
-                System.out.println( "Valores de entrada:    " + resultado.length + ",    Movimientos necesarios: " + calcularMovimientosOptimizados(fichas[0],resultado));
-                //for(int j=0; j< resultado.length;j++){
-                  //  System.out.println(resultado[j]);
-                //}
-                
+                   // System.out.println( "Arreglo torres ordenado : " + Arrays.toString(resultado));
+                }
+                  
             line = br.readLine();
             
         }
